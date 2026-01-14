@@ -187,7 +187,7 @@ const AuthView = ({ onAuth }: { onAuth: (user: User) => void }) => {
                 <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-2">Informações da Localidade</p>
                 <input name="address" placeholder="Endereço Completo (Rua, Nº, Bairro)" required className="w-full p-6 bg-gray-50 rounded-[28px] outline-none font-bold" />
                 <input name="city" placeholder="Cidade" required className="w-full p-6 bg-gray-50 rounded-[28px] outline-none font-bold" />
-                <input name="hours" placeholder="Horário de Funcionamento (ex: 08:00 - 18:00)" required className="w-full p-6 bg-gray-50 rounded-[28px] outline-none font-bold" />
+                <input name="hours" placeholder="Horário de Funcionamento (ex: 08:00 - 18:00)" required className="w-full p-6 bg-gray-50 rounded-[28px) outline-none font-bold" />
                 {role === UserRole.VET && (
                   <input name="specialty" placeholder="Sua Especialidade (ex: Clínica Geral, Cirurgia)" required className="w-full p-6 bg-gray-50 rounded-[28px] outline-none font-bold" />
                 )}
@@ -273,9 +273,15 @@ export default function App() {
     setTempImage('');
   };
 
+  // Combine mock providers with any other pros from DB (for demo purposes)
+  const providersToDisplay = useMemo(() => {
+    const list = [...MOCK_PROVIDERS];
+    return list.filter(p => p.name.toLowerCase().includes(searchQuery.toLowerCase()));
+  }, [searchQuery]);
+
   const renderHome = () => (
     <div className="space-y-6 pb-28">
-      <div className="sticky top-0 bg-white/95 backdrop-blur-md pt-4 pb-3 px-6 z-40 border-b border-gray-100 flex flex-col gap-2">
+      <div className="sticky top-0 bg-white/95 backdrop-blur-md pt-4 pb-3 px-6 z-40 border-b border-gray-100 flex flex-col gap-3">
         <div className="relative">
           <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-300 w-5 h-5" />
           <input 
@@ -284,41 +290,109 @@ export default function App() {
             value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
-        <div className="flex items-center justify-center gap-1">
-          <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest">Plataforma desenvolvida por Amethylast Cyber</p>
-        </div>
-      </div>
-      <div className="px-6 space-y-8 animate-in fade-in">
-        <div className="bg-gradient-to-br from-blue-700 to-orange-500 p-10 rounded-[56px] text-white shadow-2xl relative overflow-hidden">
-          <div className="flex items-center gap-2 mb-2">
-            <Sparkles className="w-4 h-4 text-orange-200" />
-            <span className="text-[10px] font-black uppercase tracking-[0.3em] opacity-80">Dica do OnliPet</span>
+        {user?.role === UserRole.USER && (
+          <div className="flex gap-2 p-1 bg-gray-100 rounded-[24px]">
+            <button onClick={() => setViewMode('list')} className={`flex-1 py-3 text-[10px] font-black uppercase rounded-[18px] transition-all ${viewMode === 'list' ? 'bg-white shadow-lg text-blue-600' : 'text-gray-400'}`}>Lista</button>
+            <button onClick={() => setViewMode('map')} className={`flex-1 py-3 text-[10px] font-black uppercase rounded-[18px] transition-all ${viewMode === 'map' ? 'bg-white shadow-lg text-blue-600' : 'text-gray-400'}`}>Mapa Amethylast</button>
           </div>
-          <p className="text-[15px] font-bold italic leading-relaxed pr-10">{curiosity || 'Consultando a OnliPet...'}</p>
-          <PawPrint className="absolute -bottom-10 -right-10 w-44 h-44 text-white/10 -rotate-12" />
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {MOCK_PROVIDERS.filter(p => p.name.toLowerCase().includes(searchQuery.toLowerCase())).map(p => (
-            <div key={p.id} className="bg-white p-6 rounded-[56px] border-4 border-gray-50 shadow-sm flex flex-col gap-6 hover:border-orange-100 transition-all">
-              <div className="flex gap-6">
-                <img src={p.avatar} className="w-28 h-28 rounded-[40px] object-cover shadow-md" />
-                <div className="flex-1 space-y-2">
-                  <div className="flex items-center justify-between">
-                    <h3 className="font-black text-[16px] italic">{p.name}</h3>
-                    {p.isPremium && <Crown className="w-4 h-4 text-orange-500 fill-current" />}
+        )}
+      </div>
+
+      {viewMode === 'list' ? (
+        <div className="px-6 space-y-8 animate-in fade-in">
+          <div className="bg-gradient-to-br from-blue-700 to-orange-500 p-10 rounded-[56px] text-white shadow-2xl relative overflow-hidden">
+            <div className="flex items-center gap-2 mb-2">
+              <Sparkles className="w-4 h-4 text-orange-200" />
+              <span className="text-[10px] font-black uppercase tracking-[0.3em] opacity-80">Dica do OnliPet</span>
+            </div>
+            <p className="text-[15px] font-bold italic leading-relaxed pr-10">{curiosity || 'Consultando a OnliPet...'}</p>
+            <PawPrint className="absolute -bottom-10 -right-10 w-44 h-44 text-white/10 -rotate-12" />
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {providersToDisplay.map(p => (
+              <div key={p.id} className="bg-white p-6 rounded-[56px] border-4 border-gray-50 shadow-sm flex flex-col gap-6 hover:border-orange-100 transition-all">
+                <div className="flex gap-6">
+                  <img src={p.avatar} className="w-28 h-28 rounded-[40px] object-cover shadow-md" />
+                  <div className="flex-1 space-y-2">
+                    <div className="flex items-center justify-between">
+                      <h3 className="font-black text-[16px] italic">{p.name}</h3>
+                      {p.isPremium && <Crown className="w-4 h-4 text-orange-500 fill-current" />}
+                    </div>
+                    <p className="text-[12px] text-gray-500 line-clamp-2">{p.details?.bio}</p>
+                    <div className="flex items-center gap-1 pt-1">
+                      <MapPin className="w-3 h-3 text-orange-500" />
+                      <span className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">{p.city}</span>
+                    </div>
                   </div>
-                  <p className="text-[12px] text-gray-500 line-clamp-2">{p.details?.bio}</p>
-                  <div className="flex items-center gap-1 pt-1">
-                    <MapPin className="w-3 h-3 text-orange-500" />
-                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">{p.city}</span>
+                </div>
+                <Button variant="primary" className="w-full" onClick={() => { setSelectedItem(p); setSubView('details'); }}>Ver Detalhes</Button>
+              </div>
+            ))}
+          </div>
+        </div>
+      ) : (
+        <div className="px-6 pb-28 animate-in zoom-in h-[calc(100vh-280px)] relative overflow-hidden bg-gray-100 rounded-[56px] border-4 border-white shadow-2xl">
+          {/* Mock Interactive Map Background */}
+          <div className="absolute inset-0 grayscale-[0.2] opacity-40 bg-[url('https://api.mapbox.com/styles/v1/mapbox/light-v10/static/-46.6333,23.5505,12,0/1200x800?access_token=pk.eyJ1IjoiYmFyYmFyb3NhIiwiYSI6ImNraXFyeXJxejA1MjIycnBmcXJ6Z3R6Z3IifQ.X9X9X9X9X9X9X9X9X9X9X9')] bg-cover bg-center"></div>
+          
+          {/* Provider Markers on Map */}
+          {providersToDisplay.map((p, idx) => {
+             const marker = ANIMAL_MARKERS[idx % ANIMAL_MARKERS.length];
+             return (
+               <div 
+                key={p.id} 
+                className={`absolute cursor-pointer transition-transform hover:scale-125 z-10`}
+                style={{ top: `${20 + (idx % 3) * 25}%`, left: `${15 + (idx % 2) * 60}%` }}
+                onClick={() => setSelectedItem(p)}
+               >
+                 <div className={`relative flex flex-col items-center group`}>
+                    <div className={`w-14 h-14 bg-white rounded-2xl shadow-2xl border-4 flex items-center justify-center text-2xl transition-all ${selectedItem?.id === p.id ? 'border-orange-500 scale-125' : 'border-blue-600'}`}>
+                      {marker.emoji}
+                    </div>
+                    <div className="absolute -bottom-8 bg-white px-3 py-1 rounded-full shadow-lg border border-gray-100 whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
+                       <span className="text-[9px] font-black uppercase tracking-widest">{p.name}</span>
+                    </div>
+                 </div>
+               </div>
+             );
+          })}
+
+          {/* Map Info Card (Visible when provider is clicked) */}
+          {selectedItem && (
+            <div className="absolute bottom-6 left-6 right-6 bg-white/95 backdrop-blur-2xl p-6 rounded-[44px] shadow-2xl border-4 border-white flex flex-col gap-4 animate-in slide-in-from-bottom duration-300 z-20">
+              <div className="flex items-center gap-4">
+                <img src={selectedItem.avatar} className="w-20 h-20 rounded-[28px] object-cover shadow-lg border-2 border-gray-50" />
+                <div className="flex-1">
+                  <div className="flex items-center gap-2">
+                    <h4 className="font-black text-lg italic tracking-tighter">{selectedItem.name}</h4>
+                    {selectedItem.isPremium && <Crown className="w-4 h-4 text-orange-500 fill-current" />}
+                  </div>
+                  <div className="flex flex-col gap-1 mt-1">
+                    <div className="flex items-center gap-2">
+                      <Clock className="w-3 h-3 text-blue-600" />
+                      <span className="text-[9px] font-black uppercase text-gray-500 tracking-widest">{selectedItem.details?.openingHours || 'Consulte os horários'}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <MapPin className="w-3 h-3 text-orange-500" />
+                      <span className="text-[9px] font-bold text-gray-400 uppercase tracking-tighter">{selectedItem.address?.fullAddress || selectedItem.city}</span>
+                    </div>
                   </div>
                 </div>
               </div>
-              <Button variant="primary" className="w-full" onClick={() => { setSelectedItem(p); setSubView('details'); }}>Ver Detalhes</Button>
+              <div className="flex gap-3">
+                 <Button variant="primary" className="flex-1 py-4 text-[10px]" onClick={() => setSubView('details')}>Ver Catálogo Completo</Button>
+                 <button onClick={() => setSelectedItem(null)} className="p-4 bg-gray-50 rounded-[24px] text-gray-300 hover:text-red-500 transition-colors"><Trash2 className="w-6 h-6" /></button>
+              </div>
             </div>
-          ))}
+          )}
+
+          {/* Map Overlay Badge */}
+          <div className="absolute top-6 left-6 bg-blue-600 text-white px-5 py-2 rounded-full shadow-2xl flex items-center gap-2 border-2 border-white/20">
+             <Navigation className="w-4 h-4" />
+             <span className="text-[10px] font-black uppercase tracking-widest">Radar OnliPet Ativo</span>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 
@@ -509,6 +583,79 @@ export default function App() {
       </div>
     );
 
+    if (subView === 'details') return (
+      <div className="animate-in fade-in bg-white min-h-screen pb-32">
+        <div className="h-96 relative">
+          <img src={selectedItem.avatar} className="w-full h-full object-cover" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
+          <button onClick={handleBack} className="absolute top-10 left-8 p-5 bg-white/20 backdrop-blur-xl text-white rounded-[28px] shadow-2xl"><ArrowLeft className="w-8 h-8" /></button>
+          <div className="absolute bottom-12 left-12 text-white">
+            <div className="flex items-center gap-3">
+               <h2 className="text-5xl font-black tracking-tighter italic uppercase">{selectedItem.name}</h2>
+               {selectedItem.isPremium && <Crown className="w-8 h-8 text-orange-500 fill-current" />}
+            </div>
+            <p className="text-lg font-black uppercase tracking-[0.4em] opacity-80 mt-2">{selectedItem.role}</p>
+          </div>
+        </div>
+        <div className="px-12 pt-12 space-y-10">
+           {selectedItem.isPremium && (
+             <div className="bg-orange-50 p-6 rounded-[32px] border-2 border-orange-100 flex items-center gap-4">
+               <ShieldCheck className="w-10 h-10 text-orange-500" />
+               <div>
+                  <p className="text-[11px] font-black text-orange-900 uppercase tracking-widest">Parceiro Elite Verificado</p>
+                  <p className="text-[10px] text-orange-600 font-bold">Atendimento prioritário OnliPet</p>
+               </div>
+             </div>
+           )}
+           <div className="space-y-4">
+              <h3 className="text-[14px] font-black text-gray-400 uppercase tracking-[0.4em]">Sobre o Local</h3>
+              <p className="text-gray-600 text-lg leading-relaxed font-medium">{selectedItem.details?.bio}</p>
+              <div className="flex items-center gap-2 text-gray-400 mt-2">
+                 <MapPin className="w-4 h-4" />
+                 <span className="text-sm font-bold uppercase tracking-widest">{selectedItem.address?.fullAddress || selectedItem.city}</span>
+              </div>
+           </div>
+           
+           <div className="grid grid-cols-2 gap-6">
+              <div className="p-8 bg-gray-100 rounded-[44px] flex flex-col items-center gap-4 text-center">
+                 <Clock className="w-10 h-10 text-blue-600" />
+                 <p className="text-[14px] font-black text-gray-900 uppercase">{selectedItem.details?.openingHours || 'Consulte-nos'}</p>
+              </div>
+              <div className="p-8 bg-gray-100 rounded-[44px] flex flex-col items-center gap-4 text-center">
+                 <ShoppingBag className="w-10 h-10 text-orange-500" />
+                 <p className="text-[14px] font-black text-gray-900 uppercase">Ver Catálogo</p>
+              </div>
+           </div>
+           
+           {/* Catalog items display if available */}
+           {selectedItem.catalog && selectedItem.catalog.length > 0 && (
+             <div className="space-y-6">
+                <h3 className="text-[14px] font-black text-gray-400 uppercase tracking-[0.4em]">Destaques do Catálogo</h3>
+                <div className="grid grid-cols-1 gap-4">
+                   {selectedItem.catalog.map((cat: any) => (
+                      <div key={cat.id} className="bg-white p-5 rounded-[44px] border-2 border-gray-50 flex items-center gap-4 shadow-sm">
+                         <img src={cat.photo || 'https://images.unsplash.com/photo-1516734212186-a967f81ad0d7'} className="w-20 h-20 rounded-[28px] object-cover" />
+                         <div className="flex-1">
+                            <h4 className="font-black italic text-gray-800">{cat.name}</h4>
+                            <span className="text-blue-600 font-black text-xs uppercase">{cat.price}</span>
+                         </div>
+                      </div>
+                   ))}
+                </div>
+             </div>
+           )}
+
+           <Button 
+            variant="primary" 
+            className="w-full py-8 text-sm italic shadow-2xl" 
+            onClick={() => window.open(`https://wa.me/5511999999999`)}
+           >
+             Falar com {selectedItem.name}
+           </Button>
+        </div>
+      </div>
+    );
+
     if (currentTab === 'profile') {
       if (user.role !== UserRole.USER) return renderBusinessPanel();
       return (
@@ -616,7 +763,7 @@ export default function App() {
     <div className="w-full min-h-screen bg-gray-50 flex flex-col overflow-x-hidden">
       <div className="w-full max-w-4xl mx-auto bg-white shadow-2xl relative flex flex-col min-h-screen overflow-hidden">
         {!subView && (
-          <header className="fixed top-0 left-0 right-0 max-w-4xl mx-auto h-20 bg-white/95 backdrop-blur-xl border-b border-gray-50 flex items-center justify-between px-10 z-50">
+          <header className="fixed top-0 left-0 right-0 max-w-4xl mx-auto h-20 bg-white/95 backdrop-blur-xl border-b border-gray-100 flex items-center justify-between px-10 z-50">
             <div className="flex items-center gap-4 cursor-pointer" onClick={() => setCurrentTab('home')}>
               <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-orange-500 rounded-xl flex items-center justify-center shadow-lg">
                 <PawPrint className="text-white w-6 h-6" />
