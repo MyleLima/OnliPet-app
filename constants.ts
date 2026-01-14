@@ -25,6 +25,7 @@ export const MOCK_PROVIDERS: User[] = [
     role: UserRole.NGO,
     avatar: 'https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&w=300&q=80',
     city: 'São Paulo',
+    isPremium: true,
     details: {
       bio: 'Focados em resgate e reabilitação de cães idosos em SP.',
       curiosity: 'Cachorros sonham assim como os humanos!',
@@ -39,6 +40,7 @@ export const MOCK_PROVIDERS: User[] = [
     email: 'emergencia@vetcare.com',
     avatar: 'https://images.unsplash.com/photo-1537151608828-ea2b11777ee8?auto=format&fit=crop&w=300&q=80',
     city: 'Curitiba',
+    isPremium: true,
     details: {
       bio: 'Especialistas em emergências críticas e cirurgias complexas.',
       specialty: 'Emergência 24h',
@@ -52,6 +54,7 @@ export const MOCK_PROVIDERS: User[] = [
     email: 'royal@pet.com',
     avatar: 'https://images.unsplash.com/photo-1516734212186-a967f81ad0d7?auto=format&fit=crop&w=300&q=80',
     city: 'Rio de Janeiro',
+    isPremium: false,
     details: {
       bio: 'O melhor tratamento estético para seu pet com produtos orgânicos.',
       openingHours: '09:00 - 19:00'
@@ -64,6 +67,7 @@ export const MOCK_PROVIDERS: User[] = [
     email: 'vendas@racaoforte.com',
     avatar: 'https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?auto=format&fit=crop&w=300&q=80',
     city: 'Santo André',
+    isPremium: false,
     details: {
       bio: 'Tudo em nutrição animal com entrega grátis em todo o ABC.',
       openingHours: '08:00 - 20:00'
