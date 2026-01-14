@@ -49,6 +49,12 @@ const AuthView = ({ onAuth }: { onAuth: (user: User) => void }) => {
         avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${form.email.value}`,
         city: form.city?.value || 'São Paulo',
         country: 'Brasil',
+        address: {
+          street: form.street?.value || '',
+          number: form.number?.value || '',
+          neighborhood: form.neighborhood?.value || '',
+          fullAddress: `${form.street?.value || ''}, ${form.number?.value || ''} - ${form.neighborhood?.value || ''}, ${form.city?.value || 'São Paulo'}`
+        },
         details: {
           bio: form.bio?.value || '',
           cnpj: form.cnpj?.value || '',
@@ -102,19 +108,34 @@ const AuthView = ({ onAuth }: { onAuth: (user: User) => void }) => {
           </div>
         ) : (
           <div className="space-y-4 animate-in fade-in duration-500">
-            {isRegister && <button type="button" onClick={() => setStep(1)} className="text-[10px] font-black text-blue-600 uppercase flex items-center gap-1 mb-2"><ArrowLeft className="w-3 h-3" /> Voltar</button>}
-            <input name="name" type="text" placeholder={role === UserRole.USER ? "Seu Nome" : "Nome do Local"} required className="w-full p-5 bg-gray-50 rounded-[24px] border-none outline-none focus:ring-2 focus:ring-orange-100 text-xs font-bold" />
-            <input name="email" type="email" placeholder="E-mail de acesso" required className="w-full p-5 bg-gray-50 rounded-[24px] border-none outline-none focus:ring-2 focus:ring-orange-100 text-xs font-bold" />
-            <input name="password" type="password" placeholder="Sua senha secreta" required className="w-full p-5 bg-gray-50 rounded-[24px] border-none outline-none focus:ring-2 focus:ring-orange-100 text-xs font-bold" />
-            <Button type="submit" variant="primary" className="w-full py-5 text-sm mt-4">
-              {isRegister ? 'Criar minha conta' : 'Entrar no OnliPet'}
+            {isRegister && <button type="button" onClick={() => setStep(1)} className="text-[10px] font-black text-blue-600 uppercase flex items-center gap-1 mb-2"><ArrowLeft className="w-3 h-3" /> Voltar para seleção</button>}
+            
+            <div className="space-y-3">
+              <input name="name" type="text" placeholder={role === UserRole.USER ? "Seu Nome Completo" : "Nome do Lugar (Razão Social)"} required className="w-full p-5 bg-gray-50 rounded-[24px] border-none outline-none focus:ring-2 focus:ring-orange-100 text-xs font-bold" />
+              <input name="email" type="email" placeholder="E-mail de acesso" required className="w-full p-5 bg-gray-50 rounded-[24px] border-none outline-none focus:ring-2 focus:ring-orange-100 text-xs font-bold" />
+              <input name="password" type="password" placeholder="Sua senha secreta" required className="w-full p-5 bg-gray-50 rounded-[24px] border-none outline-none focus:ring-2 focus:ring-orange-100 text-xs font-bold" />
+              
+              {isRegister && (
+                <>
+                  <input name="street" type="text" placeholder="Rua / Logradouro" required className="w-full p-5 bg-gray-50 rounded-[24px] border-none outline-none focus:ring-2 focus:ring-orange-100 text-xs font-bold" />
+                  <div className="grid grid-cols-2 gap-3">
+                    <input name="number" type="text" placeholder="Número" required className="w-full p-5 bg-gray-50 rounded-[24px] border-none outline-none focus:ring-2 focus:ring-orange-100 text-xs font-bold" />
+                    <input name="neighborhood" type="text" placeholder="Bairro" required className="w-full p-5 bg-gray-50 rounded-[24px] border-none outline-none focus:ring-2 focus:ring-orange-100 text-xs font-bold" />
+                  </div>
+                  <input name="city" type="text" placeholder="Cidade" required className="w-full p-5 bg-gray-50 rounded-[24px] border-none outline-none focus:ring-2 focus:ring-orange-100 text-xs font-bold" />
+                </>
+              )}
+            </div>
+
+            <Button type="submit" variant="primary" className="w-full py-5 text-sm mt-4 shadow-xl">
+              {isRegister ? 'Criar minha conta OnliPet' : 'Entrar no OnliPet'}
             </Button>
           </div>
         )}
       </form>
 
       <button onClick={() => { setIsRegister(!isRegister); setStep(1); }} className="mt-12 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] text-center w-full">
-        {isRegister ? 'Já é membro? Login' : 'Ainda não tem conta? Cadastro'}
+        {isRegister ? 'Já é membro? Clique aqui para Login' : 'Ainda não tem conta? Clique aqui para Cadastro'}
       </button>
     </div>
   );
@@ -154,7 +175,6 @@ export default function App() {
 
   const renderHome = () => (
     <div className="space-y-4 pb-24">
-      {/* Header Estilo App Mobile */}
       <div className="sticky top-0 bg-white pt-4 pb-3 px-4 z-40 border-b border-gray-100 flex flex-col gap-3">
         <div className="relative">
           <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-300 w-4 h-4" />
@@ -166,7 +186,6 @@ export default function App() {
             onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
-        {/* Toggle LISTA / MAPA igual à imagem */}
         <div className="flex gap-2 p-1.5 bg-gray-100 rounded-[18px]">
           <button onClick={() => setViewMode('list')} className={`flex-1 py-2 text-[10px] font-black uppercase rounded-[14px] transition-all ${viewMode === 'list' ? 'bg-white shadow-md text-blue-600' : 'text-gray-400'}`}>Lista</button>
           <button onClick={() => setViewMode('map')} className={`flex-1 py-2 text-[10px] font-black uppercase rounded-[14px] transition-all ${viewMode === 'map' ? 'bg-white shadow-md text-blue-600' : 'text-gray-400'}`}>Mapa</button>
@@ -176,7 +195,6 @@ export default function App() {
       <div className="px-4 space-y-6">
         {viewMode === 'list' ? (
           <div className="space-y-6 animate-in fade-in duration-500">
-            {/* Insight Card Blue/Orange Gradient - Enhanced Visibility */}
             <div className="bg-gradient-to-br from-blue-700 via-blue-600 to-orange-500 p-8 rounded-[40px] text-white relative overflow-hidden shadow-2xl shadow-blue-200/50 border border-white/20">
               <div className="flex items-center gap-2 mb-4">
                 <div className="p-2 bg-white/20 backdrop-blur-md rounded-xl">
@@ -193,7 +211,6 @@ export default function App() {
               <button className="p-2.5 bg-gray-100 rounded-xl hover:bg-gray-200 transition-colors"><Filter className="w-4 h-4 text-gray-400" /></button>
             </div>
 
-            {/* Service Cards - Responsive Grid on Desktop */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {filteredProviders.map(p => (
                 <div key={p.id} className="bg-white p-5 rounded-[40px] border border-gray-100 shadow-sm flex flex-col gap-4 hover:shadow-xl hover:-translate-y-1 transition-all active:scale-[0.98]">
@@ -222,7 +239,6 @@ export default function App() {
             </div>
           </div>
         ) : (
-          /* Map View */
           <div className="h-[calc(100vh-280px)] w-full relative overflow-hidden bg-gray-50 rounded-[48px] border-4 border-white shadow-2xl animate-in zoom-in duration-500">
              <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-5">
                <Globe className="w-64 h-64 text-blue-600" />
@@ -244,7 +260,6 @@ export default function App() {
                 </div>
               </div>
             ))}
-            {/* Map Mini-Card Contextual */}
             {selectedItem && (
               <div className="absolute bottom-6 left-6 right-6 bg-white/95 backdrop-blur-md p-5 rounded-[40px] shadow-2xl border border-white flex items-center gap-4 animate-in slide-in-from-bottom duration-300">
                 <img src={selectedItem.avatar} className="w-16 h-16 rounded-[24px] object-cover shadow-lg border-2 border-white" />
@@ -420,7 +435,6 @@ export default function App() {
 
   return (
     <div className="w-full min-h-screen bg-gray-50 antialiased flex flex-col font-sans select-none overflow-x-hidden">
-      {/* Container Responsivo Ampliado */}
       <div className="w-full max-w-4xl mx-auto bg-white shadow-2xl relative flex flex-col min-h-screen overflow-hidden">
         {!subView && (
           <header className="fixed top-0 left-0 right-0 max-w-4xl mx-auto h-16 bg-white/95 backdrop-blur-lg border-b border-gray-100 flex items-center justify-between px-8 z-50">
@@ -470,7 +484,7 @@ const PlansView = ({ onBack, onSelectPlan, user }: any) => {
       name: 'Impacto Curto',
       duration: '15 dias',
       price: 'R$ 29,90',
-      description: 'Ideal para campanhas rápidas ou testes de visibilidade.',
+      description: 'Ideal para campanhas rápidas ou testes de visibilidade no topo regional.',
       features: ['Destaque no Top 10 regional', 'Ícone diferenciado no mapa', 'Relatórios de cliques básicos'],
       icon: Zap,
       color: 'blue'
@@ -480,7 +494,7 @@ const PlansView = ({ onBack, onSelectPlan, user }: any) => {
       name: 'Destaque Mensal',
       duration: '30 dias',
       price: 'R$ 49,90',
-      description: 'A escolha favorita para quem busca consistência.',
+      description: 'A escolha favorita para quem busca visibilidade constante e suporte.',
       features: ['Destaque no Top 10 estadual', 'Prioridade máxima no mapa', 'Suporte prioritário via WhatsApp', 'Relatórios avançados'],
       icon: Star,
       color: 'orange',
@@ -492,7 +506,7 @@ const PlansView = ({ onBack, onSelectPlan, user }: any) => {
       duration: '365 dias',
       price: 'R$ 399,90',
       installment: 'ou 12x de R$ 33,33',
-      description: 'O melhor custo-benefício para quem é referência no setor.',
+      description: 'O melhor custo-benefício para quem é referência no setor pet nacional.',
       features: ['Destaque nacional em buscas', 'Selo "Elite OnliPet" no perfil', 'Acesso antecipado a novas funções', 'Gerente de conta dedicado'],
       icon: Crown,
       color: 'purple'
@@ -820,7 +834,6 @@ const AddPetView = ({ onSave, onBack }: any) => {
   );
 };
 
-// --- Re-using existing details views from previous App.tsx but they need styling matching the wider layout ---
 const DetailsView = ({ item, onBack, onAction }: any) => {
   const [activeTab, setActiveTab] = useState('info');
 

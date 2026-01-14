@@ -32,6 +32,12 @@ export interface User {
   avatar?: string;
   country?: string;
   city?: string;
+  address?: {
+    street: string;
+    number: string;
+    neighborhood: string;
+    fullAddress: string;
+  };
   location?: {
     lat: number;
     lng: number;
