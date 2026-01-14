@@ -15,10 +15,38 @@ import { db } from './database';
 
 /** 
  * ONLIPET SECURITY MODULE - AMETHYLAST CYBER
- * Chave PIX Protegida e Criptografada (Ref: 11981292013)
- * Payload otimizado para anonimato e segurança.
+ * Gerador de Payload PIX Dinâmico (Padrão EMVCo)
  */
-const _ONLIPET_SECURE_PAYLOAD = "00020126330014br.gov.bcb.pix0111119812920135204000053039865802BR5907ONLIPET6009SAO PAULO62070503***6304D17D";
+function generatePixPayload(amount: number) {
+  const amountStr = amount.toFixed(2);
+  const amountPart = `54${String(amountStr.length).padStart(2, '0')}${amountStr}`;
+  
+  // Base do Payload PIX
+  let payload = "000201"; // Payload Format Indicator
+  payload += "26310014br.gov.bcb.pix011111981292013"; // Merchant Account Info (Chave: 11981292013)
+  payload += "52040000"; // Merchant Category Code
+  payload += "5303986"; // Transaction Currency (BRL)
+  payload += amountPart; // Transaction Amount
+  payload += "5802BR"; // Country Code
+  payload += "5907ONLIPET"; // Merchant Name
+  payload += "6009SAO PAULO"; // Merchant City
+  payload += "62070503***"; // Additional Data Field
+  payload += "6304"; // CRC16 Identifier
+  
+  // Cálculo do CRC16 CCITT-FALSE
+  let crc = 0xFFFF;
+  for (let i = 0; i < payload.length; i++) {
+    crc ^= payload.charCodeAt(i) << 8;
+    for (let j = 0; j < 8; j++) {
+      if (crc & 0x8000) crc = (crc << 1) ^ 0x1021;
+      else crc <<= 1;
+    }
+  }
+  crc &= 0xFFFF;
+  const crcFinal = crc.toString(16).toUpperCase().padStart(4, '0');
+  
+  return payload + crcFinal;
+}
 
 // --- Shared Utility Components ---
 
@@ -472,6 +500,9 @@ export default function App() {
   };
 
   const renderPixCheckout = () => {
+    // Geração do payload dinâmico com o valor exato do plano
+    const dynamicPayload = generatePixPayload(selectedPlan?.priceValue || 0);
+
     if (isProcessingPayment) {
        return (
          <div className="flex flex-col items-center justify-center min-h-screen p-12 text-center space-y-10 animate-in fade-in">
@@ -497,7 +528,7 @@ export default function App() {
         <div className="bg-gray-50 p-10 rounded-[64px] border-4 border-gray-100 flex flex-col items-center gap-10 shadow-inner w-full max-w-lg">
            <div className="bg-white p-10 rounded-[48px] shadow-2xl border-[6px] border-white relative group">
               <img 
-                src={`https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(_ONLIPET_SECURE_PAYLOAD)}`} 
+                src={`https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(dynamicPayload)}`} 
                 alt="PIX QR Code" 
                 className="w-56 h-56 transition-transform group-hover:scale-105"
               />
@@ -508,7 +539,8 @@ export default function App() {
               <div className="inline-block px-8 py-3 bg-blue-100/50 rounded-full border-2 border-blue-200">
                 <p className="text-[24px] font-black text-blue-900 tracking-tighter italic">Valor: {selectedPlan?.price}</p>
               </div>
-              <div className="h-4"></div> 
+              <p className="text-[10px] font-black text-blue-600 uppercase tracking-widest bg-blue-50 px-3 py-1 rounded-lg">Valor será identificado automaticamente no banco</p>
+              <div className="h-2"></div> 
            </div>
            
            <div className="w-full space-y-6">
@@ -516,8 +548,8 @@ export default function App() {
                  <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em] text-center">Instruções de Pagamento</p>
                  <div className="flex flex-col gap-3">
                     <Button variant="outline" className="w-full py-6 text-blue-600 border-dashed" onClick={() => {
-                      navigator.clipboard.writeText(_ONLIPET_SECURE_PAYLOAD);
-                      alert('CÓDIGO PIX COPIADO! Agora cole no seu aplicativo do banco.');
+                      navigator.clipboard.writeText(dynamicPayload);
+                      alert('CÓDIGO PIX COPIADO! Agora cole no seu aplicativo do banco. O valor de ' + selectedPlan?.price + ' já está incluído!');
                     }}>
                       <Copy className="w-6 h-6" /> Copia e Cola
                     </Button>
@@ -713,7 +745,7 @@ export default function App() {
     <div className="w-full min-h-screen bg-gray-50 antialiased flex flex-col font-sans select-none overflow-x-hidden">
       <div className="w-full max-w-4xl mx-auto bg-white shadow-2xl relative flex flex-col min-h-screen overflow-hidden">
         {!subView && (
-          <header className="fixed top-0 left-0 right-0 max-w-4xl mx-auto h-20 bg-white/95 backdrop-blur-xl border-b border-gray-50 flex items-center justify-between px-10 z-50">
+          <header className="fixed top-0 left-0 right-0 max-w-4xl mx-auto h-20 bg-white/95 backdrop-blur-xl border-b border-gray-100 flex items-center justify-between px-10 z-50">
             <div className="flex items-center gap-5">
               <div className="w-12 h-12 bg-gradient-to-r from-blue-600 to-orange-500 rounded-[18px] flex items-center justify-center shadow-2xl cursor-pointer hover:scale-105 transition-all" onClick={() => setCurrentTab('home')}>
                 <PawPrint className="text-white w-7 h-7" />
