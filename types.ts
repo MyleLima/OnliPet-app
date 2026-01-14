@@ -13,6 +13,21 @@ export enum RescueStatus {
   COMPLETED = 'COMPLETED'
 }
 
+export interface CatalogItem {
+  id: string;
+  name: string;
+  price: string;
+  description: string;
+  photo?: string;
+}
+
+export interface BusinessDay {
+  day: string;
+  isOpen: boolean;
+  openTime: string;
+  closeTime: string;
+}
+
 export interface Pet {
   id: string;
   name: string;
@@ -32,6 +47,8 @@ export interface User {
   avatar?: string;
   city?: string;
   isPremium?: boolean;
+  catalog?: CatalogItem[];
+  businessHours?: BusinessDay[];
   address?: {
     street: string;
     number: string;
@@ -62,7 +79,6 @@ export interface User {
     curiosity?: string;
     specialty?: string;
     cnpj?: string;
-    // Fix: Added missing actingType property to details interface
     actingType?: string;
   };
 }
