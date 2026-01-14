@@ -1,8 +1,8 @@
 
-import { User, UserRole, Pet } from './types';
+import { User, Pet } from './types';
 
-const USERS_KEY = 'onlipet_db_users';
-const CURRENT_USER_KEY = 'onlipet_db_session';
+const USERS_KEY = 'onlipet_v3_users';
+const SESSION_KEY = 'onlipet_v3_session';
 
 export const db = {
   getUsers: (): User[] => {
@@ -13,11 +13,17 @@ export const db = {
   register: (user: User & { password?: string }): { success: boolean; message: string; user?: User } => {
     const users = db.getUsers();
     if (users.find(u => u.email === user.email)) {
-      return { success: false, message: 'Este e-mail já está cadastrado.' };
+      return { success: false, message: 'Este e-mail já está sendo usado.' };
     }
-    const newUser = { ...user, id: Math.random().toString(36).substr(2, 9), pets: [] };
+    const newUser = { 
+      ...user, 
+      id: Math.random().toString(36).substr(2, 9), 
+      pets: [],
+      isPremium: false 
+    };
     users.push(newUser);
     localStorage.setItem(USERS_KEY, JSON.stringify(users));
+    localStorage.setItem(SESSION_KEY, JSON.stringify(newUser));
     return { success: true, message: 'Cadastro realizado!', user: newUser };
   },
 
@@ -25,11 +31,11 @@ export const db = {
     const users = db.getUsers() as (User & { password?: string })[];
     const user = users.find(u => u.email === email && u.password === password);
     if (user) {
-      const { password: _, ...userWithoutPassword } = user;
-      localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(userWithoutPassword));
-      return { success: true, message: 'Login realizado!', user: userWithoutPassword };
+      const { password: _, ...cleanUser } = user;
+      localStorage.setItem(SESSION_KEY, JSON.stringify(cleanUser));
+      return { success: true, message: 'Bem-vindo!', user: cleanUser };
     }
-    return { success: false, message: 'E-mail ou senha incorretos.' };
+    return { success: false, message: 'Credenciais inválidas.' };
   },
 
   updateUser: (updatedUser: User): void => {
@@ -38,26 +44,25 @@ export const db = {
     if (index !== -1) {
       users[index] = { ...users[index], ...updatedUser };
       localStorage.setItem(USERS_KEY, JSON.stringify(users));
-      localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(updatedUser));
+      localStorage.setItem(SESSION_KEY, JSON.stringify(updatedUser));
     }
   },
 
   addPetToUser: (userId: string, pet: Pet): void => {
-    const users = db.getUsers();
-    const index = users.findIndex(u => u.id === userId);
-    if (index !== -1) {
-      const user = users[index];
-      user.pets = [...(user.pets || []), { ...pet, id: Math.random().toString(36).substr(2, 5) }];
+    const user = db.getCurrentUser();
+    if (user && user.id === userId) {
+      const newPet = { ...pet, id: Math.random().toString(36).substr(2, 5) };
+      user.pets = [...(user.pets || []), newPet];
       db.updateUser(user);
     }
   },
 
   getCurrentUser: (): User | null => {
-    const data = localStorage.getItem(CURRENT_USER_KEY);
+    const data = localStorage.getItem(SESSION_KEY);
     return data ? JSON.parse(data) : null;
   },
 
   logout: (): void => {
-    localStorage.removeItem(CURRENT_USER_KEY);
+    localStorage.removeItem(SESSION_KEY);
   }
 };

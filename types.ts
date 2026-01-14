@@ -30,12 +30,15 @@ export interface User {
   role: UserRole;
   phone?: string;
   avatar?: string;
-  country?: string;
   city?: string;
+  isPremium?: boolean;
   address?: {
     street: string;
     number: string;
     neighborhood: string;
+    city: string;
+    state: string;
+    zipCode?: string;
     fullAddress: string;
   };
   location?: {
@@ -46,7 +49,10 @@ export interface User {
   plan?: {
     type: 'BASIC' | 'PRO' | 'ELITE';
     name: string;
+    price: number;
     expiresAt: string;
+    paymentId?: string;
+    transactionDate?: string;
   };
   details?: {
     bio?: string;
@@ -55,20 +61,10 @@ export interface User {
     responsibleName?: string;
     curiosity?: string;
     specialty?: string;
-    region?: string;
     cnpj?: string;
+    // Fix: Added missing actingType property to details interface
     actingType?: string;
-    adoptionPets?: Pet[]; 
   };
-}
-
-export interface VolunteerApplication {
-  id: string;
-  ngoId: string;
-  userId: string;
-  userName: string;
-  message: string;
-  status: 'PENDING' | 'ACCEPTED' | 'REJECTED';
 }
 
 export interface RescueCall {
@@ -84,17 +80,4 @@ export interface RescueCall {
     address: string;
   };
   createdAt: string;
-}
-
-export interface Appointment {
-  id: string;
-  userId: string;
-  petId: string;
-  petName: string;
-  providerId: string;
-  providerName: string;
-  date: string;
-  time: string;
-  service: string;
-  status: 'PENDING' | 'CONFIRMED' | 'CANCELLED';
 }
