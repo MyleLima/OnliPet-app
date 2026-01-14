@@ -13,6 +13,16 @@ export enum RescueStatus {
   COMPLETED = 'COMPLETED'
 }
 
+export interface Pet {
+  id: string;
+  name: string;
+  breed: string;
+  photo: string;
+  type: string;
+  age: string;
+  observations: string;
+}
+
 export interface User {
   id: string;
   name: string;
@@ -20,24 +30,34 @@ export interface User {
   role: UserRole;
   phone?: string;
   avatar?: string;
-  address?: string;
+  country?: string;
+  city?: string;
   location?: {
     lat: number;
     lng: number;
   };
+  pets?: Pet[];
   details?: {
     bio?: string;
     services?: string[];
     openingHours?: string;
     responsibleName?: string;
     curiosity?: string;
+    specialty?: string;
+    region?: string;
+    cnpj?: string;
+    actingType?: string;
+    adoptionPets?: Pet[]; 
   };
 }
 
-export interface NGO extends User {
-  role: UserRole.NGO;
-  distance?: string;
-  tags: string[];
+export interface VolunteerApplication {
+  id: string;
+  ngoId: string;
+  userId: string;
+  userName: string;
+  message: string;
+  status: 'PENDING' | 'ACCEPTED' | 'REJECTED';
 }
 
 export interface RescueCall {
@@ -45,7 +65,7 @@ export interface RescueCall {
   userId: string;
   userName: string;
   description: string;
-  photo: string;
+  photo?: string;
   status: RescueStatus;
   location: {
     lat: number;
@@ -58,6 +78,8 @@ export interface RescueCall {
 export interface Appointment {
   id: string;
   userId: string;
+  petId: string;
+  petName: string;
   providerId: string;
   providerName: string;
   date: string;

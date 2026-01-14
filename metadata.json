@@ -1,8 +1,9 @@
 {
-  "name": "OnliPet",
-  "description": "Uma plataforma completa para resgate, adoção, agendamentos veterinários e doações para ONGs, conectando protetores e amantes de animais.",
   "requestFramePermissions": [
     "camera",
+    "microphone",
     "geolocation"
-  ]
+  ],
+  "name": "",
+  "description": ""
 }

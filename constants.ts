@@ -1,56 +1,72 @@
 
-import { UserRole, NGO, RescueStatus } from './types';
+import { UserRole, User } from './types';
 
 export const COLORS = {
-  blue: '#2563eb', // text-blue-600
-  orange: '#f97316', // text-orange-500
+  blue: '#2563eb', 
+  orange: '#f97316', 
+  gradient: 'linear-gradient(135deg, #2563eb 0%, #f97316 100%)',
+  green: '#10b981',
+  purple: '#8b5cf6',
+  red: '#ef4444'
 };
 
-export const MOCK_NGOS: NGO[] = [
+export const ANIMAL_MARKERS = [
+  { role: UserRole.NGO, emoji: '🐶', color: '#f97316' },
+  { role: UserRole.VET, emoji: '🐱', color: '#2563eb' },
+  { role: UserRole.PETSHOP, emoji: '🐼', color: '#f97316' },
+  { role: UserRole.FEED_STORE, emoji: '🐨', color: '#2563eb' }
+];
+
+export const MOCK_PROVIDERS: User[] = [
   {
     id: 'ngo1',
     name: 'Patas Amigas',
     email: 'contato@patasamigas.org',
     role: UserRole.NGO,
-    distance: '2.5 km',
-    avatar: 'https://picsum.photos/seed/ngo1/300/200',
-    tags: ['Resgate', 'Adoção', 'Castração'],
-    location: { lat: -23.5505, lng: -46.6333 },
+    avatar: 'https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&w=300&q=80',
+    city: 'São Paulo',
     details: {
-      bio: 'Dedicados ao resgate de animais de rua em São Paulo há 10 anos.',
-      curiosity: 'Cachorros podem entender até 250 palavras!',
+      bio: 'Focados em resgate e reabilitação de cães idosos em SP.',
+      curiosity: 'Cachorros sonham assim como os humanos!',
       openingHours: '08:00 - 18:00',
-      responsibleName: 'Maria Silva'
+      actingType: 'Resgate/Adoção'
     }
   },
   {
-    id: 'ngo2',
-    name: 'Gatinhos do Bem',
-    email: 'ajuda@gatinhos.org',
-    role: UserRole.NGO,
-    distance: '5.1 km',
-    avatar: 'https://picsum.photos/seed/ngo2/300/200',
-    tags: ['Adoção', 'Doação'],
-    location: { lat: -23.5555, lng: -46.6433 },
-    details: {
-      bio: 'Especializados em cuidados felinos e adoção responsável.',
-      curiosity: 'O nariz de cada gato tem um padrão único, como uma digital humana.',
-      openingHours: '09:00 - 17:00',
-      responsibleName: 'João Pereira'
-    }
-  }
-];
-
-export const MOCK_VETS = [
-  {
     id: 'vet1',
-    name: 'Dr. Ricardo Pet',
+    name: 'Clinica VetCare 24h',
     role: UserRole.VET,
-    avatar: 'https://picsum.photos/seed/vet1/150/150',
+    email: 'emergencia@vetcare.com',
+    avatar: 'https://images.unsplash.com/photo-1537151608828-ea2b11777ee8?auto=format&fit=crop&w=300&q=80',
+    city: 'Curitiba',
     details: {
-      bio: 'Veterinário 24h especializado em cirurgias.',
-      services: ['Clínica', 'Emergência', 'Cirurgia'],
-      openingHours: '24h'
+      bio: 'Especialistas em emergências críticas e cirurgias complexas.',
+      specialty: 'Emergência 24h',
+      openingHours: '24 Horas'
+    }
+  },
+  {
+    id: 'ps1',
+    name: 'Royal Pet SPA',
+    role: UserRole.PETSHOP,
+    email: 'royal@pet.com',
+    avatar: 'https://images.unsplash.com/photo-1516734212186-a967f81ad0d7?auto=format&fit=crop&w=300&q=80',
+    city: 'Rio de Janeiro',
+    details: {
+      bio: 'O melhor tratamento estético para seu pet com produtos orgânicos.',
+      openingHours: '09:00 - 19:00'
+    }
+  },
+  {
+    id: 'cr1',
+    name: 'Ração Forte ABC',
+    role: UserRole.FEED_STORE,
+    email: 'vendas@racaoforte.com',
+    avatar: 'https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?auto=format&fit=crop&w=300&q=80',
+    city: 'Santo André',
+    details: {
+      bio: 'Tudo em nutrição animal com entrega grátis em todo o ABC.',
+      openingHours: '08:00 - 20:00'
     }
   }
 ];
