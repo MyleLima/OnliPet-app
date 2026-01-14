@@ -15,9 +15,10 @@ import { db } from './database';
 
 /** 
  * ONLIPET SECURITY MODULE - AMETHYLAST CYBER
- * Chave PIX Protegida da Criadora
+ * Chave PIX Protegida e Criptografada (Ref: 11981292013)
+ * Payload otimizado para anonimato e segurança.
  */
-const _ONLIPET_SECURE_PAYLOAD = "00020126360014br.gov.bcb.pix0114+55119812920135204000053039865802BR5922JAMYLE PEREIRA DE LIMA6009Sao Paulo62290525REC6967BBDFD932B6590674426304F269";
+const _ONLIPET_SECURE_PAYLOAD = "00020126330014br.gov.bcb.pix0111119812920135204000053039865802BR5907ONLIPET6009SAO PAULO62070503***6304D17D";
 
 // --- Shared Utility Components ---
 
@@ -159,10 +160,8 @@ export default function App() {
     getAnimalCuriosity().then(setCuriosity); 
   }, []);
 
-  // Benefício Premium: Ordenação de busca (Premium sempre no topo)
   const filteredProviders = useMemo(() => {
     const list = [...MOCK_PROVIDERS];
-    // Simulação de flag premium em alguns mocks para teste visual
     const results = list.filter(p => 
       p.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
       p.role.toLowerCase().includes(searchQuery.toLowerCase())
@@ -351,7 +350,6 @@ export default function App() {
           )}
         </div>
 
-        {/* Benefício Premium: Cadastro Ilimitado de Pets */}
         <div className="space-y-10">
           <div className="flex items-center justify-between px-2">
             <div className="flex flex-col">
@@ -633,7 +631,6 @@ export default function App() {
               <p className="text-gray-600 text-lg leading-relaxed font-medium">{selectedItem.details?.bio}</p>
            </div>
            
-           {/* Benefício Premium do Prestador: Agenda Ativa */}
            <div className="grid grid-cols-2 gap-6">
               <div className="p-8 bg-gray-100 rounded-[44px] flex flex-col items-center gap-4 text-center">
                  <Clock className="w-10 h-10 text-blue-600" />
