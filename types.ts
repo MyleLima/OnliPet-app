@@ -37,6 +37,11 @@ export interface User {
     lng: number;
   };
   pets?: Pet[];
+  plan?: {
+    type: 'BASIC' | 'PRO' | 'ELITE';
+    name: string;
+    expiresAt: string;
+  };
   details?: {
     bio?: string;
     services?: string[];
